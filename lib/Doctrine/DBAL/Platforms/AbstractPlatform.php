@@ -1482,7 +1482,7 @@ abstract class AbstractPlatform
             );
         }
 
-        return 'DROP INDEX ' . $index;
+        return 'DROP INDEX IF EXISTS ' . $index;
     }
 
     /**
