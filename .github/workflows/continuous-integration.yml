@@ -519,7 +519,7 @@ jobs:
           coverage: "pcov"
 
       - name: "Install ibm_db2 extension"
-        run: "./test/travis/install-db2-ibm_db2.sh"
+        run: "./tests/travis/install-db2-ibm_db2.sh"
 
       - name: "Cache dependencies installed with composer"
         uses: "actions/cache@v2"
