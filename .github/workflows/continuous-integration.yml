@@ -353,3 +353,77 @@ jobs:
 
       - name: "Upload Code Coverage"
         uses: "codecov/codecov-action@v1"
+
+  phpunit-mssql:
+    name: "PHPUnit with MSSQL"
+    runs-on: "ubuntu-latest"
+
+    strategy:
+      matrix:
+        php-version:
+          - "7.3"
+          - "7.4"
+        driver:
+          - "sqlsrv"
+          - "pdo_sqlsrv"
+
+    services:
+      mssql:
+        image: microsoft/mssql-server-linux:2017-latest
+        env:
+          ACCEPT_EULA: 'Y'
+          SA_PASSWORD: 'Doctrine2018'
+
+        options: >-
+          --health-cmd "echo quit | /opt/mssql-tools/bin/sqlcmd -S 127.0.0.1 -l 1 -U sa -P Doctrine2018"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+        ports:
+          - "1433:1433"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v2"
+        with:
+          fetch-depth: 2
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "${{ matrix.php-version }}"
+          coverage: "pcov"
+          tools: pecl
+          extensions: "${{ matrix.driver }}-5.7.0preview"
+
+      - name: "Cache dependencies installed with composer"
+        uses: "actions/cache@v2"
+        with:
+          path: "~/.composer/cache"
+          key: "php-${{ matrix.php-version }}-composer-locked-${{ hashFiles('composer.lock') }}"
+          restore-keys: "php-${{ matrix.php-version }}-composer-locked-"
+
+      - name: "Install dependencies with composer"
+        run: "composer install --no-interaction --no-progress --no-suggest"
+
+      # - name: "Add Microsoft key"
+      #   run: "curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -"
+
+      # - name: "Add Microsoft repository"
+      #   run: "curl https://packages.microsoft.com/config/ubuntu/16.04/prod.list | sudo tee /etc/apt/sources.list.d/mssql.list"
+
+      # - name: "Update dependencies"
+      #   run: "sudo apt-get update"
+
+      # - name: "Install SQLSRV dependencies"
+      #   run: "ACCEPT_EULA=Y sudo apt-get install -qy msodbcsql17 unixodbc unixodbc-dev libssl1.0.0"
+
+      # - name: "Install SQLSRV PHP extension"
+      #   run: "pecl install sqlsrv-5.7.0preview"
+
+      - name: "Run PHPUnit"
+        run: "vendor/bin/phpunit -c ci/github/phpunit.${{ matrix.driver }}.xml --coverage-clover=coverage.xml"
+
+      - name: "Upload Code Coverage"
+        uses: "codecov/codecov-action@v1"
