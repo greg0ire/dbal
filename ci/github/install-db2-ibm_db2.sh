@@ -22,7 +22,7 @@ echo "Installing extension"
     phpize
     ./configure --with-IBM_DB2=/tmp/dsdriver
     make -j $(nproc)
-    make install
+    sudo make install
     php --ini
     echo -e 'extension=ibm_db2.so\nibm_db2.instance_name=db2inst1' > ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/ibm_db2.ini
 )
