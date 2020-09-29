@@ -517,9 +517,10 @@ jobs:
         with:
           php-version: "${{ matrix.php-version }}"
           coverage: "pcov"
+          ini-values: extension=ibm_db2.so, ibm_db2.instance_name=db2inst1
 
       - name: "Install ibm_db2 extension"
-        run: "bash ./ci/github/install-db2-ibm_db2.sh"
+        run: "bash ./ci/github/install-db2-ibm_db2.sh ${{ matrix.php-version }}"
 
       - name: "Cache dependencies installed with composer"
         uses: "actions/cache@v2"
