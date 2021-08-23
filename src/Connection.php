@@ -43,6 +43,7 @@ use function sprintf;
  * configuration, emulated transaction nesting, lazy connecting and more.
  *
  * @psalm-import-type Params from DriverManager
+ * @template P of AbstractPlatform
  * @psalm-consistent-constructor
  */
 class Connection
@@ -127,7 +128,7 @@ class Connection
     /**
      * The database platform object used by the connection or NULL before it's initialized.
      *
-     * @var AbstractPlatform|null
+     * @var P|null
      */
     private $platform;
 
@@ -149,7 +150,7 @@ class Connection
     /**
      * The used DBAL driver.
      *
-     * @var Driver
+     * @var Driver<P>
      */
     protected $_driver;
 
@@ -166,7 +167,7 @@ class Connection
      * @internal The connection can be only instantiated by the driver manager.
      *
      * @param array<string,mixed> $params       The connection parameters.
-     * @param Driver              $driver       The driver to use.
+     * @param Driver<P>           $driver       The driver to use.
      * @param Configuration|null  $config       The configuration, optional.
      * @param EventManager|null   $eventManager The event manager, optional.
      * @psalm-param Params $params
@@ -273,9 +274,9 @@ class Connection
     }
 
     /**
-     * Gets the DatabasePlatform for the connection.
+     * Gets the database platform for the connection.
      *
-     * @return AbstractPlatform
+     * @return P
      *
      * @throws Exception
      */
@@ -361,6 +362,8 @@ class Connection
      *
      * Evaluates custom platform class and version in order to set the correct platform.
      *
+     * @return P
+     *
      * @throws Exception If an invalid platform was specified for this connection.
      */
     private function detectDatabasePlatform(): AbstractPlatform
@@ -368,9 +371,10 @@ class Connection
         $version = $this->getDatabasePlatformVersion();
 
         if ($version !== null) {
-            assert($this->_driver instanceof VersionAwarePlatformDriver);
+            /** @var VersionAwarePlatformDriver<P> $driver */
+            $driver = $this->_driver;
 
-            return $this->_driver->createDatabasePlatformForVersion($version);
+            return $driver->createDatabasePlatformForVersion($version);
         }
 
         return $this->_driver->getDatabasePlatform();

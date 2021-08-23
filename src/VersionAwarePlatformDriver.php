@@ -13,6 +13,9 @@ use Doctrine\DBAL\Platforms\AbstractPlatform;
  * distinction.
  *
  * @deprecated All drivers will have to be aware of the server version in the next major release.
+ *
+ * @template P of AbstractPlatform
+ * @extends Driver<P>
  */
 interface VersionAwarePlatformDriver extends Driver
 {
@@ -22,7 +25,7 @@ interface VersionAwarePlatformDriver extends Driver
      * @param string $version The platform/server version string to evaluate. This should be given in the notation
      *                        the underlying database vendor uses.
      *
-     * @return AbstractPlatform
+     * @return P
      *
      * @throws Exception If the given version string could not be evaluated.
      */

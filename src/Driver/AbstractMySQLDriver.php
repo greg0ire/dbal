@@ -16,20 +16,19 @@ use Doctrine\DBAL\Schema\MySQLSchemaManager;
 use Doctrine\DBAL\VersionAwarePlatformDriver;
 use Doctrine\Deprecations\Deprecation;
 
-use function assert;
 use function preg_match;
 use function stripos;
 use function version_compare;
 
 /**
  * Abstract base implementation of the {@see Driver} interface for MySQL based drivers.
+ *
+ * @implements VersionAwarePlatformDriver<AbstractMySQLPlatform>
  */
 abstract class AbstractMySQLDriver implements VersionAwarePlatformDriver
 {
     /**
      * {@inheritdoc}
-     *
-     * @throws Exception
      */
     public function createDatabasePlatformForVersion($version)
     {
@@ -121,8 +120,6 @@ abstract class AbstractMySQLDriver implements VersionAwarePlatformDriver
 
     /**
      * {@inheritdoc}
-     *
-     * @return AbstractMySQLPlatform
      */
     public function getDatabasePlatform()
     {
@@ -131,13 +128,9 @@ abstract class AbstractMySQLDriver implements VersionAwarePlatformDriver
 
     /**
      * {@inheritdoc}
-     *
-     * @return MySQLSchemaManager
      */
     public function getSchemaManager(Connection $conn, AbstractPlatform $platform)
     {
-        assert($platform instanceof AbstractMySQLPlatform);
-
         return new MySQLSchemaManager($conn, $platform);
     }
 

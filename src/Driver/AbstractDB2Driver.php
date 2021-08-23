@@ -10,10 +10,10 @@ use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Platforms\DB2Platform;
 use Doctrine\DBAL\Schema\DB2SchemaManager;
 
-use function assert;
-
 /**
  * Abstract base implementation of the {@see Driver} interface for IBM DB2 based drivers.
+ *
+ * @implements Driver<DB2Platform>
  */
 abstract class AbstractDB2Driver implements Driver
 {
@@ -30,8 +30,6 @@ abstract class AbstractDB2Driver implements Driver
      */
     public function getSchemaManager(Connection $conn, AbstractPlatform $platform)
     {
-        assert($platform instanceof DB2Platform);
-
         return new DB2SchemaManager($conn, $platform);
     }
 

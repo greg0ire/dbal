@@ -11,10 +11,10 @@ use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Platforms\OraclePlatform;
 use Doctrine\DBAL\Schema\OracleSchemaManager;
 
-use function assert;
-
 /**
  * Abstract base implementation of the {@see Driver} interface for Oracle based drivers.
+ *
+ * @implements Driver<OraclePlatform>
  */
 abstract class AbstractOracleDriver implements Driver
 {
@@ -31,8 +31,6 @@ abstract class AbstractOracleDriver implements Driver
      */
     public function getSchemaManager(Connection $conn, AbstractPlatform $platform)
     {
-        assert($platform instanceof OraclePlatform);
-
         return new OracleSchemaManager($conn, $platform);
     }
 
