@@ -9,7 +9,6 @@ use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver;
 use Doctrine\DBAL\Driver\Connection as DriverConnection;
-use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\MySQLSchemaManager;
@@ -20,7 +19,7 @@ use PHPUnit\Framework\TestCase;
 use function array_merge;
 
 /**
- * @psalm-import-type Params from DriverManager
+ * @psalm-import-type Params from Connection
  */
 class MySQLInheritCharsetTest extends TestCase
 {

@@ -25,6 +25,7 @@ use Doctrine\DBAL\SQL\Parser;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\Deprecations\Deprecation;
 use LogicException;
+use PDO;
 use Throwable;
 use Traversable;
 
@@ -42,7 +43,45 @@ use function sprintf;
  * A database abstraction-level connection that implements features like events, transaction isolation levels,
  * configuration, emulated transaction nesting, lazy connecting and more.
  *
- * @psalm-import-type Params from DriverManager
+ * @psalm-type OverrideParams = array{
+ *     charset?: string,
+ *     dbname?: string,
+ *     default_dbname?: string,
+ *     driver?: key-of<self::DRIVER_MAP>,
+ *     driverClass?: class-string<Driver>,
+ *     driverOptions?: array<mixed>,
+ *     host?: string,
+ *     password?: string,
+ *     path?: string,
+ *     pdo?: PDO,
+ *     port?: int,
+ *     user?: string,
+ *     unix_socket?: string,
+ * }
+ * @psalm-type Params = array{
+ *     charset?: string,
+ *     dbname?: string,
+ *     default_dbname?: string,
+ *     driver?: key-of<self::DRIVER_MAP>,
+ *     driverClass?: class-string<Driver>,
+ *     driverOptions?: array<mixed>,
+ *     host?: string,
+ *     keepSlave?: bool,
+ *     keepReplica?: bool,
+ *     master?: OverrideParams,
+ *     memory?: bool,
+ *     password?: string,
+ *     path?: string,
+ *     pdo?: PDO,
+ *     port?: int,
+ *     primary?: OverrideParams,
+ *     replica?: array<OverrideParams>,
+ *     sharding?: array<string,mixed>,
+ *     slaves?: array<OverrideParams>,
+ *     user?: string,
+ *     wrapperClass?: class-string<Connection>,
+ *     unix_socket?: string,
+ * }
  * @template P of AbstractPlatform
  * @psalm-consistent-constructor
  */
@@ -121,7 +160,7 @@ class Connection
      *
      * @var array<string,mixed>
      * @phpstan-var array<string,mixed>
-     * @psalm-var Params
+     * @psalm-var Params&array{platform?: P}
      */
     private $params;
 
@@ -170,7 +209,7 @@ class Connection
      * @param Driver<P>           $driver       The driver to use.
      * @param Configuration|null  $config       The configuration, optional.
      * @param EventManager|null   $eventManager The event manager, optional.
-     * @psalm-param Params $params
+     * @psalm-param Params&array{platform?: P} $params
      * @phpstan-param array<string,mixed> $params
      *
      * @throws Exception
@@ -215,7 +254,7 @@ class Connection
      * @internal
      *
      * @return array<string,mixed>
-     * @psalm-return Params
+     * @psalm-return Params&array{platform?: P}
      * @phpstan-return array<string,mixed>
      */
     public function getParams()
