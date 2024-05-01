@@ -379,7 +379,6 @@ jobs:
           --health-cmd "mysqladmin ping --silent"
           -e MYSQL_ALLOW_EMPTY_PASSWORD=yes
           -e MYSQL_DATABASE=doctrine_tests
-          ${{ matrix.custom-entrypoint }}
 
         ports:
           - "3306:3306"
